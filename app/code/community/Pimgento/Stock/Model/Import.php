@@ -24,7 +24,7 @@ class Pimgento_Stock_Model_Import extends Pimgento_Core_Model_Import_Abstract
     {
         $file = $task->getFile();
 
-        $this->getRequest()->createTableFromFile($this->getCode(), $file, 2);
+        $this->getRequest()->createTableFromFile($this->getCode(), $file, 4);
 
         return true;
     }
@@ -144,10 +144,12 @@ class Pimgento_Stock_Model_Import extends Pimgento_Core_Model_Import_Abstract
             ->from(
                 array('p' => $this->getTable()),
                 array(
-                    'product_id'  => 'p.entity_id',
-                    'stock_id'    => $this->_zde(1),
-                    'qty'         => 'p.qty',
-                    'is_in_stock' => $this->_zde('IF(`p`.`qty` > 0, 1, 0)'),
+                    'product_id'            => 'p.entity_id',
+                    'stock_id'              => $this->_zde(1),
+                    'qty'                   => 'p.qty',
+                    'is_in_stock'           => $this->_zde('IF(`p`.`qty` > 0, 1, 0)'),
+                    'min_qty'               => 'p.min_qty',
+                    'use_config_min_qty'    => 'p.use_config_min_qty'
                 )
             )
             ->joinInner(
@@ -159,7 +161,7 @@ class Pimgento_Stock_Model_Import extends Pimgento_Core_Model_Import_Abstract
         $insert = $adapter->insertFromSelect(
             $select,
             $resource->getTable('cataloginventory/stock_item'),
-            array('product_id', 'stock_id', 'qty', 'is_in_stock'),
+            array('product_id', 'stock_id', 'qty', 'is_in_stock', 'min_qty', 'use_config_min_qty'),
             Varien_Db_Adapter_Interface::INSERT_ON_DUPLICATE
         );
 
