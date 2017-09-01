@@ -167,6 +167,10 @@ class Pimgento_Stock_Model_Import extends Pimgento_Core_Model_Import_Abstract
 
         $adapter->query($insert);
 
+        //Trigger core function after import that sets items out of stock basing on their quantities and config settings
+        //Reason: min_qty gets set through import, when min_qty is larger than the qty itself, the product should be set to out of stock.
+        Mage::getResourceSingleton('cataloginventory/stock')->updateSetOutOfStock();
+
         return true;
     }
 
